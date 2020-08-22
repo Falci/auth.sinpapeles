@@ -1,10 +1,14 @@
 const { exec } = require("child_process");
-var express = require("express");
-var router = express.Router();
+const express = require("express");
+const config = require("config");
+const router = express.Router();
+
+const dig = config.get("dig");
 
 const getTXT = (domain) =>
   new Promise((resolve, reject) => {
-    exec(`dig ${domain} TXT +short`, (error, out) => {
+    console.log(`dig ${dig && `@${dig}`} ${domain} TXT +short`);
+    exec(`dig ${dig && `@${dig}`} ${domain} TXT +short`, (error, out) => {
       if (error) {
         return reject(error);
       }
