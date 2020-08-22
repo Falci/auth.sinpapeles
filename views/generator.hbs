@@ -1,0 +1,34 @@
+<div class="d-flex justify-content-center mt-5">
+    <form>
+        <fieldset>
+            <legend>Generator</legend>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" placeholder="Password" />
+            </div>
+            <div class="form-group">
+                <label for="key">Public key</label>
+                <input type="text" class="form-control" id="key" placeholder="Public key" readonly
+                    aria-describedby="keyHelp" style="width: 500px" />
+                <small id="keyHelp" class="form-text text-muted">Add this key to your domain's DNS. <a
+                        href="/help#alias">More info</a>.</small>
+            </div>
+        </fieldset>
+
+    </form>
+</div>
+
+<script>
+    (() => {
+        const password = document.getElementById('password');
+        const key = document.getElementById('key');
+
+        const hash = () => {
+            const publicKey = auth.getPublicKeyFromPassword(password.value);
+            key.value = publicKey;
+        }
+
+        password.addEventListener('keypress', hash);
+        password.addEventListener('change', hash);
+    })()
+</script>

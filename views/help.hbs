@@ -1,0 +1,32 @@
+<h2>Help</h2>
+
+<dl>
+    <dt>Username and password</dt>
+    <dd>
+        <p>In this authentication process, the username and password are actually public and private keys. Since those
+            keys
+            are too long to remember, we did two modifications:</p>
+        <ul>
+            <li>You can add an alias for your public key;</li>
+            <li>The private key can be generated from any size password.</li>
+        </ul>
+
+    </dd>
+
+    <dt>Public and private key</dt>
+    <dd>
+        <p>The private key is the <a href="https://en.wikipedia.org/wiki/SHA-256" target="_blank">SHA-256</a> hash of
+            any
+            size password.</p>
+        <p>The public key is generated using the private key and <a href="https://en.bitcoin.it/wiki/Secp256k1"
+                target="_blank">Secp256k1</a>.</p>
+        <p>You can use <a href="/generator">this offline generator</a> to find your public key.</p>
+    </dd>
+
+    <dt>Alias</dt>
+    <dd>
+        <p>To create an alias for your public key, you must to have a domain. You need to update your domain's DNS and
+            add a <code>TXT</code> record:</p>
+        <code>TXT auth=public-key</code>
+    </dd>
+</dl>

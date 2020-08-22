@@ -1,0 +1,106 @@
+<div class="d-flex justify-content-center mt-5">
+    <form id="form" novalidate autocomplete="off">
+        <fieldset>
+            <legend>Login</legend>
+            <div class="form-group">
+                <label for="domain">Domain</label>
+                <input type="text" class="form-control" id="domain" aria-describedby="domainHelp"
+                    placeholder="Domain" />
+                <small id="domainHelp" class="form-text text-muted">It must to have a public key available. <a
+                        href="/help#alias">More info</a>.</small>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" placeholder="Password" />
+            </div>
+
+            <div class="row">
+                <div class="col mr-auto">
+                    <button type="submit" class="btn btn-primary">Login</button>
+                </div>
+                <div class="col text-right">
+                    <a href="/generator" class="btn btn-secondary">Generator</a>
+                </div>
+
+            </div>
+        </fieldset>
+
+    </form>
+</div>
+
+<script>
+    (() => {
+        const domain = document.getElementById('domain');
+        const password = document.getElementById('password');
+        const form = document.getElementById('form');
+
+        let publicKey = '';
+        const challenge = "{{challenge}}";
+        const callback = new URL("{{{callback}}}");
+
+        const isValidPassword = (key, pwd) => key === auth.getPublicKeyFromPassword(pwd);
+
+        domain.addEventListener('change', () => {
+            domain.classList.remove('is-valid');
+            domain.classList.remove('is-invalid');
+            domain.classList.add('loading');
+
+            fetch('/api', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
+                body: JSON.stringify({ domain: domain.value })
+            })
+                .then(res => res.json())
+                .then(({ error, key }) => {
+                    domain.classList.remove('loading');
+                    domain.classList.add(error ? 'is-invalid' : 'is-valid');
+
+                    publicKey = key;
+                })
+                .catch(() => {
+                    domain.classList.remove('loading');
+                    domain.classList.add('is-invalid');
+
+                    publicKey = '';
+                });
+        })
+
+        password.addEventListener('change', () => {
+            password.classList.remove('is-valid');
+            password.classList.remove('is-invalid');
+
+            if (!publicKey)
+                return;
+
+            const isValid = isValidPassword(publicKey, password.value);
+            password.classList.add(isValid ? 'is-valid' : 'is-invalid');
+        });
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            if (!domain.value) {
+                return alert('Domain is required');
+            }
+
+            if (!publicKey) {
+                return alert('No public key found for this domain');
+            }
+
+            if (!isValidPassword(publicKey, password.value)) {
+                return alert('Wrong password');
+            }
+
+            const signature = auth.sign(challenge, password.value);
+
+            callback.searchParams.append('challenge', challenge);
+            callback.searchParams.append('key', publicKey);
+            callback.searchParams.append('signature', signature);
+            callback.searchParams.append('domain', domain.value);
+
+            window.location.href = callback.toString()
+        });
+    })();
+</script>
