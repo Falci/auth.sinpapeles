@@ -2,7 +2,7 @@ window.register = () => {
   try {
     navigator.registerProtocolHandler(
       "web+auth",
-      "http://localhost:2002/login?%s",
+      "/login?%s",
       "Auth Sinpapeles"
     );
 
