@@ -29,9 +29,7 @@ app.use(
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use((req, _, next) => {
-  app.locals.canInstall = ["localhost", "auth.sinpapeles.xyz"].includes(
-    req.host
-  );
+  app.locals.canInstall = req.host.indexOf("localhost") > -1;
 
   next();
 });
