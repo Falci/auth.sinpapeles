@@ -29,7 +29,9 @@ app.use(
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use((req, _, next) => {
-  app.locals.canInstall = req.protocol === "https" || req.host === "localhost";
+  app.locals.canInstall = ["localhost", "auth.sinpapeles.xyz"].includes(
+    req.host
+  );
 
   next();
 });
