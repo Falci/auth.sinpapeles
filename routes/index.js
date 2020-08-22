@@ -14,15 +14,16 @@ const getUrl = (url) => {
 };
 
 router.get("/login", function (req, res, next) {
-  const query = Object.keys(req.query).find((key) =>
-    key.startsWith("web+auth:")
-  );
+  const { query } = req;
+  const params = Object.keys(query).find((key) => key.startsWith("web+auth:"));
 
-  if (!query) {
+  if (!params && (!query.challenge || !query.callback)) {
     return next(new Error("Invalid params"));
   }
 
-  const [challenge, callback] = query.replace(/^web\+auth:/, "").split("@");
+  const [challenge, callback] = params
+    ? params.replace(/^web\+auth:/, "").split("@")
+    : [query.challenge, query.callback];
 
   if (challenge.startsWith("//")) {
     return next(new Error("Invalid challenge: Don't put // after web+auth:"));
