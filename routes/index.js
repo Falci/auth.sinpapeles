@@ -29,7 +29,10 @@ router.get("/login", function (req, res, next) {
     return next(new Error("Invalid challenge: Don't put // after web+auth:"));
   }
 
-  res.render("login", { challenge, callback: getUrl(callback) });
+  res.render("login", {
+    challenge,
+    callback: getUrl(decodeURIComponent(callback)),
+  });
 });
 
 module.exports = router;
